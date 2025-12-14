@@ -3,9 +3,10 @@
 	"interfaceOnly": true,
 	"generateAliasAsModel": true,
 	"useOptional": false,
+	"useRecords": true,
 	"useSpringBoot3": true,
 	"useJarkartaEe": true,
 	"skipDefaultInterface": true,
-	"modelNameSuffix": "DTO",
+	"modelNameSuffix": "",
 	"additionalModelTypeAnnotations": "@lombok.Data;@lombok.NoArgsConstructor;@lombok.AllArgsConstructor;@lombok.Builder;@lombok.ToString"
 }
