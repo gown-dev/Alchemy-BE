@@ -81,6 +81,11 @@ public class Autoconfiguration {
     }
     
     @Bean
+    public AuthProperties authProperties() {
+    	return new AuthProperties();
+    }
+    
+    @Bean
     public AuthExceptionHandler authExceptionHandler() {
         return new AuthExceptionHandler();
     }

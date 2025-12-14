@@ -90,3 +90,4 @@ nb-configuration.xml
 *.log
 .env
 application-local.yaml
+.settings/
