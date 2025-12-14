@@ -2,14 +2,8 @@ package alchemy.config;
 
 import java.util.Arrays;
 
-import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.boot.autoconfigure.security.SecurityProperties;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -32,12 +26,9 @@ import alchemy.repositories.AccountRepository;
 import alchemy.repositories.SecurityTokenRepository;
 import lombok.RequiredArgsConstructor;
 
-@AutoConfiguration
+@Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity(debug = false)
-@EntityScan(basePackages = "model.entities")
-@EnableJpaRepositories(basePackages = "repositories")
-@EnableConfigurationProperties(SecurityProperties.class)
 public class Autoconfiguration {
     
     @Bean
@@ -56,7 +47,6 @@ public class Autoconfiguration {
     }
     
     @Bean
-    @ConditionalOnMissingBean(SecurityFilterChain.class)
     public SecurityFilterChain securityFilterChain(HttpSecurity http, BearerTokenFilter bearerTokenFilter) throws Exception {
         return http.authorizeHttpRequests((request) -> {
             request.requestMatchers(HttpMethod.OPTIONS, "/**").permitAll();
@@ -86,7 +76,6 @@ public class Autoconfiguration {
     }
     
     @Bean
-    @ConditionalOnMissingBean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
@@ -97,13 +86,11 @@ public class Autoconfiguration {
     }
     
     @Bean
-    @ConditionalOnProperty(prefix = "sentinel.auth.token", name = "enable-bearer-filter", matchIfMissing = true)
     public BearerTokenFilter bearerTokenFilter(SecurityTokenRepository repository) {
         return new BearerTokenFilter(repository);
     }
     
     @Bean
-    @ConditionalOnMissingBean(UserDetailsService.class)
     public UserDetailsService userDetailsService(AccountRepository accountRepository) {
         return username -> accountRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found."));

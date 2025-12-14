@@ -21,7 +21,7 @@ spring:
 
 logging:
   level:
-    root: ERROR
+    root: INFO
     org.springframework.boot: ERROR
     org.springframework.boot.context.config: WARN
     org.springframework.core: ERROR
