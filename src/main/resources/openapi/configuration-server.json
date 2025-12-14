@@ -1,0 +1,11 @@
+{
+	"library": "spring-boot",
+	"interfaceOnly": true,
+	"generateAliasAsModel": true,
+	"useOptional": false,
+	"useSpringBoot3": true,
+	"useJarkartaEe": true,
+	"skipDefaultInterface": true,
+	"modelNameSuffix": "DTO",
+	"additionalModelTypeAnnotations": "@lombok.Data;@lombok.NoArgsConstructor;@lombok.AllArgsConstructor;@lombok.Builder;@lombok.ToString"
+}

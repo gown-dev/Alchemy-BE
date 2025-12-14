@@ -1,0 +1,307 @@
+openapi: 3.0.0
+info:
+  title: API Alchemy
+  version: v1
+  description: Backend API for Alchemy
+
+tags:
+  - name: Auth
+    description: Authentication related content
+
+paths:
+  /auth/register:
+    post:
+      summary: Register a new account.
+      operationId: register
+      tags: 
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '201':
+          description: Account succesfully created.
+        '400':
+          description: Invalid Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '409':
+          description: Conflict (i.e. username already taken)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+  /auth/login:
+    post:
+      summary: Request a bearer token
+      operationId: login
+      tags: 
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AccountRequest'
+      responses:
+        '200':
+          description: Authentication succeeded, token issued in the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid request (i.e. missing authentication data).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/refresh:
+    post:
+      summary: Request a new bearer token using an issued refresh token
+      operationId: refresh
+      tags:
+        - Auth
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RefreshRequest'
+      responses:
+        '200':
+          description: Refresh succeeded, token issued in the response.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '400':
+          description: Invalid request (i.e. missing refresh token).
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+  
+    AccountRequest:
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          type: string
+          description: Username for the account creation
+          example: Gown
+        password:
+          type: string
+          description: Hashed password
+          format: password
+          example: e2t3dzd5rgz898fzefz9951f9aze1f
+
+    RefreshRequest:
+      type: object
+      required:
+        - refreshToken
+      properties:
+        refreshToken:
+          type: string
+          description: Refresh token used to request a new access token
+          example: VCJ9eyJhbGciOiJIUzI1NiIsInR5cCI6IkpX
+
+    TokenResponse:
+      type: object
+      properties:
+        accessToken:
+          type: string
+          description: Bearer token.
+          example: d0e6011c-0adc-4a75-97cb-92b462e27a7b
+        accessExpirationTime:
+          type: string
+          format: date-time
+          description: Expiration of the Bearer token
+          example: 1985-04-12T23:20:50.52Z
+        refreshToken:
+          type: string
+          description: Refresh token.
+          example: d69a8eac-2dd3-4b25-bb71-72924a59b928
+        refreshExpirationTime:
+          type: string
+          format: date-time
+          description: Expiration of the Refresh token
+          example: 1985-04-12T23:20:50.52Z
+        
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Error code.
+          example: ERR_T001
+        description:
+          type: string
+          description: Error description
+          example: Malformed authentication
+        message:
+          type: string
+          description: Error message.
+          example: The authentication object was malformed, and the application was unable to read it.
+    
+    AccountSummary:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Account username
+          example: Gown
+        hearts:
+          type: integer
+          description: Number of hearts given to this Account
+          example: 16
+        stars:
+          type: integer
+          description: Number of stars of this Account
+          example: 3798
+        messages:
+          type: integer
+          description: Number of unread messages
+          example: 3
+        familiar:
+          $ref: "#/components/schemas/Pet"
+
+#    Avatar:
+#      type: object
+#      properties:
+        # Add the relevant parts to properly display the avatar
+
+    Pet:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the pet
+          example: Pwiky
+        stats:
+          type: object
+          properties:
+            currentHealth:
+              type: integer
+              description: Current health points of the pet
+              example: 35
+            maxHealth:
+              type: integer
+              description: Max health points of the pet
+              example: 50
+        configuration:
+          type: object
+          properties:
+            horns:
+              $ref: "#/components/schemas/BodyPart"
+            ears:
+              $ref: "#/components/schemas/BodyPart"
+            head:
+              $ref: "#/components/schemas/BodyPart"
+            floof:
+              $ref: "#/components/schemas/BodyPart"
+            wings:
+              $ref: "#/components/schemas/BodyPart"
+            body:
+              $ref: "#/components/schemas/BodyPart"
+            tail:
+              $ref: "#/components/schemas/BodyPart"
+
+    BodyPart:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Body part numeric identifier
+          example: 4
+
+    Announcement:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date-time
+          description: Date at which the announcement was made
+          example: 1985-04-12T23:20:50.52Z
+        title:
+          type: string
+          description: Title of the announcement
+          example: A Strange Discovery
+        image:
+          type: string
+          description: Relative path of the image file
+          example: announcements/MyAnnouncementImage.png
+        content:
+          type: string
+          description: Text content of the announcement to display, in HTML
+          example: <p>A very long text with markup</p>
+
+    Item:
+      type: object
+      properties:
+        id:
+          type: integer
+          description: Unique identifier of the Item
+          example: 7
+        name:
+          type: string
+          description: Name of the item
+          example: Vial of Bottled Fire
+        description:
+          type: string
+          description: Description of the item
+          example: A magical glass vial containing the living breath of a dragon.
+
+    Event:
+      type: object
+      properties:
+        user:
+          type: string
+          description: Username concerned by the event
+          example: Gown
+        type:
+          type: string
+          description: Type of the event
+          example: AnsweredTopic
+        description:
+          type: string
+          description: Description of the event
+          example: Gown entered the competition "Winter"
+
+    
+
+  responses:
+    UnauthorizedError:
+      description: Unauthenticated.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
