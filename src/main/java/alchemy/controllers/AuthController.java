@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import alchemy.api.AuthApi;
-import alchemy.model.AccountRequest;
-import alchemy.model.RefreshRequest;
+import alchemy.model.AccountRequestDTO;
+import alchemy.model.RefreshRequestDTO;
 import alchemy.model.SecurityToken;
-import alchemy.model.TokenResponse;
+import alchemy.model.TokenResponseDTO;
 import alchemy.services.AuthService;
 import lombok.RequiredArgsConstructor;
 
@@ -25,10 +25,10 @@ public class AuthController implements AuthApi {
 	private AuthService authService;
 	
 	@PostMapping("/register")
-    public ResponseEntity<TokenResponse> register(@RequestBody AccountRequest request) {
+    public ResponseEntity<TokenResponseDTO> register(@RequestBody AccountRequestDTO request) {
 		SecurityToken token = authService.register(request);
 		
-		TokenResponse response = TokenResponse.builder()
+		TokenResponseDTO response = TokenResponseDTO.builder()
 				.accessToken(token.getAccessToken().toString())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
 				.refreshToken(token.getRefreshToken().toString())
@@ -39,10 +39,10 @@ public class AuthController implements AuthApi {
     }
 	
 	@PostMapping("/login")
-    public ResponseEntity<TokenResponse> login(@RequestBody AccountRequest request) {
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody AccountRequestDTO request) {
 		SecurityToken token = authService.authenticate(request);
 		
-		TokenResponse response = TokenResponse.builder()
+		TokenResponseDTO response = TokenResponseDTO.builder()
 				.accessToken(token.getAccessToken().toString())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
 				.refreshToken(token.getRefreshToken().toString())
@@ -53,10 +53,10 @@ public class AuthController implements AuthApi {
     }
 	
 	@GetMapping("/refresh")
-    public ResponseEntity<TokenResponse> refresh(@RequestBody RefreshRequest request) {
+    public ResponseEntity<TokenResponseDTO> refresh(@RequestBody RefreshRequestDTO request) {
 		SecurityToken token = authService.refresh(request);
 		
-		TokenResponse response = TokenResponse.builder()
+		TokenResponseDTO response = TokenResponseDTO.builder()
 				.accessToken(token.getAccessToken().toString())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
 				.refreshToken(token.getRefreshToken().toString())

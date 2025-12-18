@@ -102,6 +102,108 @@ paths:
           $ref: '#/components/responses/UnauthorizedError'
         '500':
           $ref: '#/components/responses/InternalServerError'
+          
+  /admin/genes:
+    get:
+      summary: Request the list of pet genes options
+      operationId: getGenes
+      tags:
+        - Admin
+      responses:
+        '200':
+          description: Successfully fetched the list of pet genes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenesResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create a pet gene.
+      operationId: createGene
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneIdentificationRequest'
+      responses:
+        '200':
+          description: Successfully created the pet genes, returned the modified list of pet genes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenesResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a pet gene.
+      operationId: deleteGene
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneIdentificationRequest'
+      responses:
+        '200':
+          description: Successfully deleted the pet genes, returned the modified list of pet genes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenesResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    put:
+      summary: Synchronize the pet genes by sending the expected list of genes.
+      operationId: synchronizeGenes
+      tags:
+        - Admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GeneIdentificationRequest'
+      responses:
+        '200':
+          description: Successfully synchronized the list of pet genes, returned the modified list of pet genes.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenesResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   schemas:
@@ -152,6 +254,22 @@ components:
           format: date-time
           description: Expiration of the Refresh token
           example: 1985-04-12T23:20:50.52Z
+          
+    GeneIdentificationRequest:
+      type: object
+      properties:
+        genes:
+          type: array
+          items:
+            $ref: '#/components/schemas/GeneIdentification'
+          
+    GenesResponse:
+      type: object
+      properties:
+        genes:
+          type: array
+          items:
+            $ref: '#/components/schemas/Gene'
         
     ErrorResponse:
       type: object
@@ -159,7 +277,7 @@ components:
         code:
           type: string
           description: Error code.
-          example: ERR_T001
+          example: ERR_AUTH-T001
         description:
           type: string
           description: Error description
@@ -168,6 +286,26 @@ components:
           type: string
           description: Error message.
           example: The authentication object was malformed, and the application was unable to read it.
+        
+    ConfirmationResponse:
+      type: object
+      properties:
+        code:
+          type: string
+          description: Confirmation error code.
+          example: CONF_ADM-C001
+        description:
+          type: string
+          description: Confirmation error description
+          example: Genes Synchronization
+        message:
+          type: string
+          description: Confirmation error message.
+          example: Requested synchronization causes the deletion of the following gene(s) -> Unicorn horns ; Please confirm by using the confirmation header.
+        confirmationKey:
+          type: string
+          description: Header to use to confirm the request.
+          example: x-confirm-sync-genes
     
     AccountSummary:
       type: object
@@ -218,27 +356,39 @@ components:
           type: object
           properties:
             horns:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
             ears:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
             head:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
             floof:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
             wings:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
             body:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
             tail:
-              $ref: "#/components/schemas/BodyPart"
+              $ref: "#/components/schemas/Gene"
 
-    BodyPart:
+    GeneIdentification:
       type: object
       properties:
-        id:
-          type: integer
-          description: Body part numeric identifier
-          example: 4
+        image:
+          type: string
+          description: Image file location
+          example: /assets/body/body-fox.png
+          
+    Gene:
+      type: object
+      properties:
+        identification:
+          $ref: "#/components/schemas/GeneIdentification"
+        tags:
+          type: array
+          items: 
+            type: string
+            description: Tag value associated with the Gene
+            example: Horn
 
     Announcement:
       type: object
@@ -292,8 +442,6 @@ components:
           type: string
           description: Description of the event
           example: Gown entered the competition "Winter"
-
-    
 
   responses:
     UnauthorizedError:

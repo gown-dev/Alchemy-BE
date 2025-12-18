@@ -16,12 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import alchemy.annotations.Logged;
 import alchemy.config.AuthProperties;
-import alchemy.exceptions.AuthException;
-import alchemy.exceptions.BaseAuthError;
+import alchemy.exceptions.ProcessException;
+import alchemy.exceptions.process.auth.AuthProcessError;
 import alchemy.model.Account;
-import alchemy.model.AccountRequest;
-import alchemy.model.RefreshRequest;
+import alchemy.model.AccountRequestDTO;
+import alchemy.model.RefreshRequestDTO;
 import alchemy.model.SecurityToken;
 import alchemy.repositories.AccountRepository;
 import alchemy.repositories.SecurityTokenRepository;
@@ -33,17 +34,18 @@ public class AuthService {
 	
 	private final AuthProperties authProperties;
 
-	protected final AccountRepository accountRepository;
-	protected final SecurityTokenRepository tokenRepository;
-	protected final PasswordEncoder passwordEncoder;
+	private final AccountRepository accountRepository;
+	private final SecurityTokenRepository tokenRepository;
+	private final PasswordEncoder passwordEncoder;
 	
 	@Transactional
-	public SecurityToken authenticate(AccountRequest request) throws AuthException {
+	@Logged("Authentication")
+	public SecurityToken authenticate(AccountRequestDTO request) throws ProcessException {
 		verifyLoginRequest(request);
 		Account account = findAccount(request);
 		
 		if (!passwordEncoder.matches(request.getPassword(), account.getPassword())) {
-			throw new AuthException(BaseAuthError.INVALID_CREDENTIALS, HttpStatus.FORBIDDEN);
+			throw new ProcessException(AuthProcessError.INVALID_CREDENTIALS, HttpStatus.FORBIDDEN);
 		}
 		
 		Optional<SecurityToken> token = tokenRepository.findByAccount(account);
@@ -66,31 +68,32 @@ public class AuthService {
 	}
 	
 	@Transactional
-	public SecurityToken register(AccountRequest request) throws AuthException {
+	@Logged("Registration")
+	public SecurityToken register(AccountRequestDTO request) throws ProcessException {
 		if (StringUtils.isBlank(request.getUsername())) {
-			throw new AuthException(BaseAuthError.MISSING_USERNAME, HttpStatus.BAD_REQUEST);
+			throw new ProcessException(AuthProcessError.MISSING_USERNAME, HttpStatus.BAD_REQUEST);
 		}
 
 		if (StringUtils.isBlank(request.getPassword())) {
-			throw new AuthException(BaseAuthError.MISSING_PASSWORD, HttpStatus.BAD_REQUEST);
+			throw new ProcessException(AuthProcessError.MISSING_PASSWORD, HttpStatus.BAD_REQUEST);
 		}
 		
 		if (!StringUtils.isBlank(authProperties.getUsernameRestriction())) {
 			if (!Pattern.matches(authProperties.getUsernameRestriction(), request.getUsername())) {
-				throw new AuthException(BaseAuthError.USERNAME_UNSUITABLE, HttpStatus.BAD_REQUEST);
+				throw new ProcessException(AuthProcessError.USERNAME_UNSUITABLE, HttpStatus.BAD_REQUEST);
 			}
 		}
 		
 		if (!StringUtils.isBlank(authProperties.getPasswordRestriction())) {
 			if (!Pattern.matches(authProperties.getPasswordRestriction(), request.getPassword())) {
-				throw new AuthException(BaseAuthError.PASSWORD_UNSUITABLE, HttpStatus.BAD_REQUEST);
+				throw new ProcessException(AuthProcessError.PASSWORD_UNSUITABLE, HttpStatus.BAD_REQUEST);
 			}
 		}
 		
-		Optional<BaseAuthError> accountAlreadyExists = checkAccount(request);
+		Optional<AuthProcessError> accountAlreadyExists = checkAccount(request);
 				
 		if (accountAlreadyExists.isPresent()) {
-			throw new AuthException(accountAlreadyExists.get(), HttpStatus.FORBIDDEN);
+			throw new ProcessException(accountAlreadyExists.get(), HttpStatus.FORBIDDEN);
 		}
 		
 		final Account account = registerAccount(request);
@@ -100,19 +103,20 @@ public class AuthService {
 	}
 	
 	@Transactional
-	public SecurityToken refresh(RefreshRequest request) throws AuthException {
+	@Logged("Refresh")
+	public SecurityToken refresh(RefreshRequestDTO request) throws ProcessException {
 		if (request.getRefreshToken() == null) {
-			throw new AuthException(BaseAuthError.MISSING_OR_INVALID_REFRESH_TOKEN, HttpStatus.FORBIDDEN);
+			throw new ProcessException(AuthProcessError.MISSING_OR_INVALID_REFRESH_TOKEN, HttpStatus.FORBIDDEN);
 		}
 		
 		Optional<SecurityToken> token = tokenRepository.findByRefreshToken(UUID.fromString(request.getRefreshToken()));
 		
 		SecurityToken result = token.orElseThrow(() -> {
-			throw new AuthException(BaseAuthError.MISSING_OR_INVALID_REFRESH_TOKEN, HttpStatus.FORBIDDEN);
+			throw new ProcessException(AuthProcessError.MISSING_OR_INVALID_REFRESH_TOKEN, HttpStatus.FORBIDDEN);
 		});
 		
 		if (result.getRefreshExpirationTime().isBefore(LocalDateTime.now())) {
-			throw new AuthException(BaseAuthError.MISSING_OR_INVALID_REFRESH_TOKEN, HttpStatus.FORBIDDEN);
+			throw new ProcessException(AuthProcessError.MISSING_OR_INVALID_REFRESH_TOKEN, HttpStatus.FORBIDDEN);
 		}
 		
 		result = generateAccessToken(result);
@@ -124,32 +128,32 @@ public class AuthService {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		
 		if (authentication instanceof AnonymousAuthenticationToken) {
-			throw new AuthException(BaseAuthError.UNAUTHENTICATED, HttpStatus.FORBIDDEN);
+			throw new ProcessException(AuthProcessError.UNAUTHENTICATED, HttpStatus.FORBIDDEN);
 		}
 
 		try {
 			return (Account) authentication.getPrincipal();
 		} catch (ClassCastException exception) {
-			throw new AuthException(BaseAuthError.MALFORMED_AUTH, HttpStatus.INTERNAL_SERVER_ERROR);
+			throw new ProcessException(AuthProcessError.MALFORMED_AUTH, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 	}
 	
-	private Optional<BaseAuthError> checkAccount(AccountRequest request) {
+	private Optional<AuthProcessError> checkAccount(AccountRequestDTO request) {
 		if (accountRepository.existsByUsername(request.getUsername())) {
-			return Optional.of(BaseAuthError.USERNAME_TAKEN);
+			return Optional.of(AuthProcessError.USERNAME_TAKEN);
 		} else {
 			return Optional.empty();
 		}
 	}
 	
-	private Account registerAccount(AccountRequest request) {
+	private Account registerAccount(AccountRequestDTO request) {
 		Account account = createAccount(request);
 		accountRepository.save(account);
 		
 		return account;
 	}
 	
-	private Account createAccount(AccountRequest request) {
+	private Account createAccount(AccountRequestDTO request) {
 		return Account.builder()
 			.username(request.getUsername())
 			.password(passwordEncoder.encode(request.getPassword()))
@@ -159,19 +163,19 @@ public class AuthService {
 			.build();
 	}
 	
-	private void verifyLoginRequest(AccountRequest request) {
+	private void verifyLoginRequest(AccountRequestDTO request) {
 		if (StringUtils.isBlank(request.getUsername())) {
-			throw new AuthException(BaseAuthError.MISSING_USERNAME, HttpStatus.BAD_REQUEST);
+			throw new ProcessException(AuthProcessError.MISSING_USERNAME, HttpStatus.BAD_REQUEST);
 		}
 	
 		if (StringUtils.isBlank(request.getPassword())) {
-			throw new AuthException(BaseAuthError.MISSING_PASSWORD, HttpStatus.BAD_REQUEST);
+			throw new ProcessException(AuthProcessError.MISSING_PASSWORD, HttpStatus.BAD_REQUEST);
 		}
 	}
 	
-	private Account findAccount(AccountRequest request) {
+	private Account findAccount(AccountRequestDTO request) {
 		return accountRepository.findByUsername(request.getUsername()).orElseThrow(() -> {
-			return new AuthException(BaseAuthError.INVALID_CREDENTIALS, HttpStatus.FORBIDDEN);
+			return new ProcessException(AuthProcessError.INVALID_CREDENTIALS, HttpStatus.FORBIDDEN);
 		});
 	}
 	

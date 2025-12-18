@@ -7,6 +7,6 @@
 	"useSpringBoot3": true,
 	"useJarkartaEe": true,
 	"skipDefaultInterface": true,
-	"modelNameSuffix": "",
+	"modelNameSuffix": "DTO",
 	"additionalModelTypeAnnotations": "@lombok.Data;@lombok.NoArgsConstructor;@lombok.AllArgsConstructor;@lombok.Builder;@lombok.ToString"
 }

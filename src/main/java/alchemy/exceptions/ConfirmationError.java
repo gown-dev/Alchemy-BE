@@ -1,9 +1,10 @@
 package alchemy.exceptions;
 
-public interface AuthError {
+public interface ConfirmationError {
 	
 	String getCode();
 	String getDescription();
 	String getMessage();
+	String getConfirmationKey();
 
 }

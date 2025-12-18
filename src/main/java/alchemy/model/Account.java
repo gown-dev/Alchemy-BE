@@ -22,42 +22,41 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @SuppressWarnings("serial")
-@Entity 
-@Table(name = "Account")
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@Entity
+@Table(name = "Account")
 public class Account implements UserDetails {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
-	protected UUID id;
+	private UUID id;
 	
 	@Column(name = "username", nullable = false)
-    protected String username;
+	private String username;
 	
 	@Column(name = "tag", nullable = true)
-	protected String tag;
+	private String tag;
 	
 	@Column(name = "password", nullable = false)
-    protected String password;
+	private String password;
 	
 	@Builder.Default
-    protected boolean active = true;
+	private boolean active = true;
 	
 	@Builder.Default
-    protected boolean expired = false;
+	private boolean expired = false;
 	
 	@Builder.Default
-    protected boolean locked = false;
+	private boolean locked = false;
 	
 	@Builder.Default
-    protected boolean expiredCredentials = false;
+	private boolean expiredCredentials = false;
 	
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(
@@ -65,7 +64,7 @@ public class Account implements UserDetails {
 	    joinColumns = @JoinColumn(name = "account_id")
 	)
 	@Column(name = "role")
-	protected List<String> authorities;
+	private List<String> authorities;
 
     @Override
     public boolean isAccountNonExpired() {

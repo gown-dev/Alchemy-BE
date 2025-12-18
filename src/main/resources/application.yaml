@@ -18,23 +18,6 @@ spring:
     hikari:
       maximum-pool-size: 3
       minimum-idle: 2
-
-logging:
-  level:
-    root: INFO
-    org.springframework.boot: ERROR
-    org.springframework.boot.context.config: WARN
-    org.springframework.core: ERROR
-    org.springframework.beans: ERROR
-    org.springframework.data.jpa: ERROR
-    org.springframework.security: ERROR 
-    org.springframework.jdbc: ERROR
-    org.springframework.jdbc.core: WARN
-    org.springframework.orm.jpa: WARN
-    org.hibernate: ERROR
-    org.hibernate.SQL: WARN
-    org.hibernate.type.descriptor.sql.BasicExtractor: WARN
-    org.hibernate.orm.jdbc.bind: WARN
     
 server:
   port: 8080

@@ -2,8 +2,12 @@ package alchemy.config;
 
 import java.util.Arrays;
 
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -20,7 +24,7 @@ import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CommonsRequestLoggingFilter;
 
-import alchemy.exceptions.AuthExceptionHandler;
+import alchemy.exceptions.AlchemyExceptionHandler;
 import alchemy.filters.BearerTokenFilter;
 import alchemy.repositories.AccountRepository;
 import alchemy.repositories.SecurityTokenRepository;
@@ -29,6 +33,10 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 @RequiredArgsConstructor
 @EnableWebSecurity(debug = false)
+@EntityScan(basePackages = "alchemy.model")
+@EnableJpaRepositories(basePackages = "alchemy.repositories")
+@ComponentScan(basePackages = "alchemy")
+@EnableConfigurationProperties(AuthProperties.class)
 public class Autoconfiguration {
     
     @Bean
@@ -86,8 +94,8 @@ public class Autoconfiguration {
     }
     
     @Bean
-    public AuthExceptionHandler authExceptionHandler() {
-        return new AuthExceptionHandler();
+    public AlchemyExceptionHandler authExceptionHandler() {
+        return new AlchemyExceptionHandler();
     }
     
     @Bean

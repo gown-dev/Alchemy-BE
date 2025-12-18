@@ -12,12 +12,12 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
@@ -26,15 +26,15 @@ public class SecurityToken {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
-    protected UUID id;
+	private UUID id;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "account_id", nullable = false)
-    protected Account account;
+	private Account account;
 	
-    protected UUID accessToken;
-    protected LocalDateTime accessExpirationTime;
-    protected UUID refreshToken;
-    protected LocalDateTime refreshExpirationTime;
+	private UUID accessToken;
+	private LocalDateTime accessExpirationTime;
+	private UUID refreshToken;
+	private LocalDateTime refreshExpirationTime;
 
 }
