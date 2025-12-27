@@ -14,7 +14,7 @@ import alchemy.model.AccountRequestDTO;
 import alchemy.model.RefreshRequestDTO;
 import alchemy.model.SecurityToken;
 import alchemy.model.TokenResponseDTO;
-import alchemy.services.AuthService;
+import alchemy.services.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,9 +29,9 @@ public class AuthController implements AuthApi {
 		SecurityToken token = authService.register(request);
 		
 		TokenResponseDTO response = TokenResponseDTO.builder()
-				.accessToken(token.getAccessToken().toString())
+				.accessToken(token.getAccessToken())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
-				.refreshToken(token.getRefreshToken().toString())
+				.refreshToken(token.getRefreshToken())
 				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
 				.build();
 		
@@ -43,9 +43,9 @@ public class AuthController implements AuthApi {
 		SecurityToken token = authService.authenticate(request);
 		
 		TokenResponseDTO response = TokenResponseDTO.builder()
-				.accessToken(token.getAccessToken().toString())
+				.accessToken(token.getAccessToken())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
-				.refreshToken(token.getRefreshToken().toString())
+				.refreshToken(token.getRefreshToken())
 				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
 				.build();
 		
@@ -57,9 +57,9 @@ public class AuthController implements AuthApi {
 		SecurityToken token = authService.refresh(request);
 		
 		TokenResponseDTO response = TokenResponseDTO.builder()
-				.accessToken(token.getAccessToken().toString())
+				.accessToken(token.getAccessToken())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
-				.refreshToken(token.getRefreshToken().toString())
+				.refreshToken(token.getRefreshToken())
 				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
 				.build();
 		

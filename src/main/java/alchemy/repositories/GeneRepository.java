@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import alchemy.model.Gene;
+import alchemy.model.pets.genes.Gene;
 
 public interface GeneRepository extends JpaRepository<Gene, String> {
 	
-	boolean existsByIdIn(List<String> images);
+	boolean existsByImageIn(List<String> ids);
 	
 }

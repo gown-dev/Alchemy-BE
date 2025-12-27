@@ -1,4 +1,4 @@
-package alchemy.services;
+package alchemy.services.auth;
 
 import java.time.LocalDateTime;
 import java.util.Arrays;

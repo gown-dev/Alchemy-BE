@@ -10,15 +10,27 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import alchemy.api.AdminApi;
 import alchemy.exceptions.confirmation.admin.AdminConfirmationError;
 import alchemy.mappers.GeneMapper;
-import alchemy.model.Gene;
-import alchemy.model.GeneIdentificationRequestDTO;
-import alchemy.model.GenesResponseDTO;
-import alchemy.services.AdminService;
+import alchemy.mappers.MoveMapper;
+import alchemy.model.GeneCreationRequestDTO;
+import alchemy.model.GeneDeletionRequestDTO;
+import alchemy.model.GeneListResponseDTO;
+import alchemy.model.GeneSynchronizationRequestDTO;
+import alchemy.model.MoveCreationRequestDTO;
+import alchemy.model.MoveDeletionRequestDTO;
+import alchemy.model.MoveListResponseDTO;
+import alchemy.model.MoveUpdateRequestDTO;
+import alchemy.model.pets.genes.Gene;
+import alchemy.model.pets.moves.Move;
+import alchemy.services.admin.GeneService;
+import alchemy.services.admin.MoveService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -26,51 +38,97 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/admin")
 public class AdminController implements AdminApi {
 	
-    private HttpServletRequest httpRequest;
-	private GeneMapper geneMapper;
-	private AdminService adminService;
+	private final GeneMapper geneMapper;
+	private final GeneService geneService;
+	private final MoveMapper moveMapper;
+	private final MoveService moveService;
 
-	@GetMapping("/getGenes")
-	public ResponseEntity<GenesResponseDTO> getGenes() {
-		List<Gene> genes = adminService.getAllGenes();
+	@GetMapping("/genes")
+	public ResponseEntity<GeneListResponseDTO> getGenes() {
+		List<Gene> genes = geneService.getAllGenes();
 		
-		GenesResponseDTO response = GenesResponseDTO.builder()
+		GeneListResponseDTO response = GeneListResponseDTO.builder()
 				.genes(genes.stream().map(gene -> geneMapper.toGeneDTO(gene)).collect(Collectors.toList()))
 				.build();
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@PostMapping("/synchronizeGenes")
-	public ResponseEntity<GenesResponseDTO> createGene(GeneIdentificationRequestDTO request) {
-		List<Gene> genes = adminService.createGenes(request.getGenes());
+	@PostMapping("/genes")
+	public ResponseEntity<GeneListResponseDTO> createGene(GeneCreationRequestDTO request) {
+		List<Gene> genes = geneService.createGenes(request.getGeneIdentifications());
 		
-		GenesResponseDTO response = GenesResponseDTO.builder()
+		GeneListResponseDTO response = GeneListResponseDTO.builder()
 				.genes(genes.stream().map(gene -> geneMapper.toGeneDTO(gene)).collect(Collectors.toList()))
 				.build();
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@DeleteMapping("/synchronizeGenes")
-	public ResponseEntity<GenesResponseDTO> deleteGene(GeneIdentificationRequestDTO request) {
-		List<Gene> genes = adminService.deleteGenes(request.getGenes());
+	@DeleteMapping("/genes")
+	public ResponseEntity<GeneListResponseDTO> deleteGene(GeneDeletionRequestDTO request) {
+		List<Gene> genes = geneService.deleteGenes(request.getGeneIdentifications());
 		
-		GenesResponseDTO response = GenesResponseDTO.builder()
+		GeneListResponseDTO response = GeneListResponseDTO.builder()
 				.genes(genes.stream().map(gene -> geneMapper.toGeneDTO(gene)).collect(Collectors.toList()))
 				.build();
 		
 		return ResponseEntity.ok(response);
 	}
 	
-	@PutMapping("/synchronizeGenes")
-	public ResponseEntity<GenesResponseDTO> synchronizeGenes(GeneIdentificationRequestDTO request) {
+	@PutMapping("/genes")
+	public ResponseEntity<GeneListResponseDTO> synchronizeGenes(GeneSynchronizationRequestDTO request) {
+		HttpServletRequest httpRequest = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
 		boolean isConfirmed = Boolean.parseBoolean(httpRequest.getHeader(AdminConfirmationError.GENES_SYNCHRONIZATION_CONFIRM.confirmationKey));
 
-		List<Gene> genes = adminService.synchronizeGenes(request.getGenes(), isConfirmed);
+		List<Gene> genes = geneService.synchronizeGenes(request.getGeneIdentifications(), isConfirmed);
 		
-		GenesResponseDTO response = GenesResponseDTO.builder()
+		GeneListResponseDTO response = GeneListResponseDTO.builder()
 				.genes(genes.stream().map(gene -> geneMapper.toGeneDTO(gene)).collect(Collectors.toList()))
+				.build();
+		
+		return ResponseEntity.ok(response);
+	}
+
+	@Override
+	public ResponseEntity<MoveListResponseDTO> getMoves() {
+		List<Move> moves = moveService.getAllMoves();
+		
+		MoveListResponseDTO response = MoveListResponseDTO.builder()
+			.moves(moves.stream().map(move -> moveMapper.toDTO(move)).collect(Collectors.toList()))
+			.build();
+		
+		return ResponseEntity.ok(response);
+	}
+
+	@PostMapping("/moves")
+	public ResponseEntity<MoveListResponseDTO> createMove(@Valid MoveCreationRequestDTO request) {
+		List<Move> moves = moveService.createMove(request.getMoveIdentifications());
+		
+		MoveListResponseDTO response = MoveListResponseDTO.builder()
+			.moves(moves.stream().map(move -> moveMapper.toDTO(move)).collect(Collectors.toList()))
+			.build();
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	@DeleteMapping("/moves")
+	public ResponseEntity<MoveListResponseDTO> deleteMove(@Valid MoveDeletionRequestDTO request) {
+		List<Move> moves = moveService.deleteMove(request.getMoveIdentifications());
+		
+		MoveListResponseDTO response = MoveListResponseDTO.builder()
+				.moves(moves.stream().map(move -> moveMapper.toDTO(move)).collect(Collectors.toList()))
+				.build();
+		
+		return ResponseEntity.ok(response);
+	}
+	
+	@PutMapping("/moves")
+	public ResponseEntity<MoveListResponseDTO> updateMove(@Valid MoveUpdateRequestDTO request) {
+		List<Move> moves = moveService.updateMove(request.getMove());
+
+		MoveListResponseDTO response = MoveListResponseDTO.builder()
+				.moves(moves.stream().map(move -> moveMapper.toDTO(move)).collect(Collectors.toList()))
 				.build();
 		
 		return ResponseEntity.ok(response);

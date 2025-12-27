@@ -32,7 +32,7 @@ import alchemy.model.RefreshRequestDTO;
 import alchemy.model.SecurityToken;
 import alchemy.repositories.AccountRepository;
 import alchemy.repositories.SecurityTokenRepository;
-import alchemy.services.AuthService;
+import alchemy.services.auth.AuthService;
 import config.AbstractTest;
 
 @DataJpaTest(showSql = false)
