@@ -31,6 +31,7 @@ public class BearerTokenFilter extends OncePerRequestFilter {
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 		if (Stream.of(Autoconfiguration.WHITELISTED_PATHS).anyMatch(path -> path.equals(request.getServletPath()))) {
 			filterChain.doFilter(request, response);
+			return;
 		}
 		
 		String authHeader = request.getHeader("Authorization");

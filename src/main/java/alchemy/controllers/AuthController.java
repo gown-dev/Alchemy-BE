@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("/auth")
 public class AuthController implements AuthApi {
 
-	private AuthService authService;
+	private final AuthService authService;
 	
 	@PostMapping("/register")
     public ResponseEntity<TokenResponseDTO> register(@RequestBody AccountRequestDTO request) {
