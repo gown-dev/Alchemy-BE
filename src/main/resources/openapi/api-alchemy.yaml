@@ -7,12 +7,17 @@ info:
 tags:
   - name: Auth
     description: Authentication related content
-
+    
+security:
+  - bearerAuth: []
+  
 paths:
+
   /auth/register:
     post:
       summary: Register a new account.
       operationId: register
+      security: []
       tags: 
         - Auth
       requestBody:
@@ -47,6 +52,7 @@ paths:
     post:
       summary: Request a bearer token
       operationId: login
+      security: []
       tags: 
         - Auth
       requestBody:
@@ -74,9 +80,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /auth/refresh:
-    post:
+    get:
       summary: Request a new bearer token using an issued refresh token
       operationId: refresh
+      security: []
       tags:
         - Auth
       requestBody:
@@ -98,6 +105,24 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /auth/account:
+    get:
+      summary: Fetches the Account administrative informations
+      operationId: account
+      tags:
+        - Auth
+      responses:
+        '200':
+          description: Successfully fetched the Account administrative informations.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountResponse'
         '403':
           $ref: '#/components/responses/UnauthorizedError'
         '500':
@@ -308,6 +333,13 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
 components:
+
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: opaque
+      
   schemas:
     AccountRequest:
       type: object
@@ -358,6 +390,12 @@ components:
           format: date-time
           description: Expiration of the Refresh token
           example: 1985-04-12T23:20:50.52Z
+          
+    AccountResponse:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/Account'
             
     GeneCreationRequest:
       type: object
@@ -458,6 +496,20 @@ components:
           type: string
           description: Header to use to confirm the request
           example: x-confirm-sync-genes
+          
+    Account:
+      type: object
+      properties:
+        username:
+          type: string
+          description: Account username
+          example: Gown
+        roles:
+          type: array
+          items: 
+            type: string
+            description: Account roles
+            example: [ADMIN, USER]
     
     AccountSummary:
       type: object

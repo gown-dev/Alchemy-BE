@@ -38,6 +38,8 @@ import lombok.RequiredArgsConstructor;
 @ComponentScan(basePackages = "alchemy")
 @EnableConfigurationProperties(AuthProperties.class)
 public class Autoconfiguration {
+	
+	public static String[] WHITELISTED_PATHS = new String[] { "/auth/register", "/auth/login", "/auth/refresh" };
     
     @Bean
     public CommonsRequestLoggingFilter requestLoggingFilter() {

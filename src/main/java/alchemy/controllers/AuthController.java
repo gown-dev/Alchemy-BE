@@ -1,6 +1,7 @@
 package alchemy.controllers;
 
 import java.time.ZoneOffset;
+import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import alchemy.api.AuthApi;
+import alchemy.model.Account;
+import alchemy.model.AccountDTO;
 import alchemy.model.AccountRequestDTO;
+import alchemy.model.AccountResponseDTO;
 import alchemy.model.RefreshRequestDTO;
 import alchemy.model.SecurityToken;
 import alchemy.model.TokenResponseDTO;
@@ -65,5 +69,23 @@ public class AuthController implements AuthApi {
 		
         return ResponseEntity.ok(response);
     }
+
+	@GetMapping("/account")
+	public ResponseEntity<AccountResponseDTO> account() {
+		Account account = authService.getAuthenticatedAccount();
+		
+		AccountDTO dto = AccountDTO.builder()
+				.username(account.getUsername())
+				.roles(account.getAuthorities().stream()
+						.map(authority -> authority.getAuthority())
+						.collect(Collectors.toList()))
+				.build();
+		
+		AccountResponseDTO response = AccountResponseDTO.builder()
+				.account(dto)
+				.build();
+		
+		return ResponseEntity.ok(response);
+	}
 	
 }
