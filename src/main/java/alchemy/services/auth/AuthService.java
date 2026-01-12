@@ -138,6 +138,17 @@ public class AuthService {
 		}
 	}
 	
+	@Transactional
+	public Optional<Account> authenticateToken(String token) {
+		SecurityToken securityToken = tokenRepository.findByAccessToken(UUID.fromString(token)).orElse(null);
+	    
+	    if (securityToken == null || securityToken.getAccessExpirationTime().isBefore(LocalDateTime.now())) {
+	        return Optional.empty();
+	    }
+	    
+	    return Optional.of(securityToken.getAccount());
+	}
+	
 	private Optional<AuthProcessError> checkAccount(AccountRequestDTO request) {
 		if (accountRepository.existsByUsername(request.getUsername())) {
 			return Optional.of(AuthProcessError.USERNAME_TAKEN);

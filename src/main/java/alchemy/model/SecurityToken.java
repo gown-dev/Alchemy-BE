@@ -29,7 +29,7 @@ public class SecurityToken {
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
 	

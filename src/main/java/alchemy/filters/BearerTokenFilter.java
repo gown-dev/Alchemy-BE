@@ -1,8 +1,7 @@
 package alchemy.filters;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.UUID;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -13,8 +12,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import alchemy.config.Autoconfiguration;
 import alchemy.model.Account;
-import alchemy.model.SecurityToken;
-import alchemy.repositories.SecurityTokenRepository;
+import alchemy.services.auth.AuthService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class BearerTokenFilter extends OncePerRequestFilter {
 
-	private final SecurityTokenRepository tokenRepository;
+	private final AuthService authService;
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -38,28 +36,21 @@ public class BearerTokenFilter extends OncePerRequestFilter {
 
         if(authHeader != null && authHeader.startsWith("Bearer ") && !authHeader.substring(7).isBlank()) {
             String accessToken = authHeader.substring(7);
-            Account account = isTokenValid(accessToken);
-
-            if(account == null) {
-                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                return;
-            } else {
+            
+            isTokenValid(accessToken).ifPresentOrElse((account) -> {
                 Authentication authenticationToken = new UsernamePasswordAuthenticationToken(account, account.getPassword(), account.getAuthorities());
                 SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-            }
+            }, () -> {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
+            });
         }
 
         filterChain.doFilter(request, response);
 	}
 	
-	private Account isTokenValid(String token) {
-		SecurityToken securityToken = tokenRepository.findByAccessToken(UUID.fromString(token)).orElse(null);
-	    
-	    if (securityToken == null || securityToken.getAccessExpirationTime().isBefore(LocalDateTime.now())) {
-	        return null;
-	    }
-	    
-	    return securityToken.getAccount();
+	private Optional<Account> isTokenValid(String token) {
+		return authService.authenticateToken(token);
 	}
 
 }

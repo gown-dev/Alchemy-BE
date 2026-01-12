@@ -27,7 +27,7 @@ import org.springframework.web.filter.CommonsRequestLoggingFilter;
 import alchemy.exceptions.AlchemyExceptionHandler;
 import alchemy.filters.BearerTokenFilter;
 import alchemy.repositories.AccountRepository;
-import alchemy.repositories.SecurityTokenRepository;
+import alchemy.services.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -101,8 +101,8 @@ public class Autoconfiguration {
     }
     
     @Bean
-    public BearerTokenFilter bearerTokenFilter(SecurityTokenRepository repository) {
-        return new BearerTokenFilter(repository);
+    public BearerTokenFilter bearerTokenFilter(AuthService authService) {
+        return new BearerTokenFilter(authService);
     }
     
     @Bean
