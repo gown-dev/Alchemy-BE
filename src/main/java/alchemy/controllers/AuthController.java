@@ -56,7 +56,7 @@ public class AuthController implements AuthApi {
         return ResponseEntity.ok(response);
     }
 	
-	@GetMapping("/refresh")
+	@PostMapping("/refresh")
     public ResponseEntity<TokenResponseDTO> refresh(@RequestBody RefreshRequestDTO request) {
 		SecurityToken token = authService.refresh(request);
 		

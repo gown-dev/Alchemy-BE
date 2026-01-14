@@ -80,7 +80,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /auth/refresh:
-    get:
+    post:
       summary: Request a new bearer token using an issued refresh token
       operationId: refresh
       security: []
@@ -332,6 +332,24 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /player:
+    get:
+      summary: Fetches the Account summary
+      operationId: accountSummary
+      tags:
+        - Player
+      responses:
+        '200':
+          description: Successfully fetched the Account summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountSummaryResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 components:
 
   securitySchemes:
@@ -396,6 +414,12 @@ components:
       properties:
         account:
           $ref: '#/components/schemas/Account'
+          
+    AccountSummaryResponse:
+      type: object
+      properties:
+        account:
+          $ref: '#/components/schemas/AccountSummary'
             
     GeneCreationRequest:
       type: object
@@ -537,6 +561,38 @@ components:
 #      type: object
 #      properties:
         # Add the relevant parts to properly display the avatar
+        
+    Clothing:
+      type: object
+      properties:
+        name:
+          type: string
+          description: Name of the piece of clothing
+          example: Leather hat
+        price:
+          type: integer
+          description: Price of the piece of clothing
+          example: 50
+        type:
+          $ref: '#/components/schemas/ClothingType'
+        
+    ClothingType:
+      type: string
+      description: Type of the piece of clothing
+      enum:
+        - HEAD
+        - HAIR
+        - FACE
+        - NECK
+        - RIGHT_HAND
+        - LEFT_HAND
+        - JACKET
+        - SHOES
+        - TOP
+        - BOTTOM
+        - LEGGINGS
+        - MISC
+      example: JACKET
 
     Pet:
       type: object
