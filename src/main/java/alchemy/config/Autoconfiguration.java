@@ -74,7 +74,7 @@ public class Autoconfiguration {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList(new String[] { "http://localhost:*" }));
+        configuration.setAllowedOriginPatterns(Arrays.asList(new String[] { "http://localhost:*", "https://alchemy-fe.onrender.com" }));
         configuration.setAllowedMethods(Arrays.asList(new String[] { "GET", "POST", "PUT", "DELETE", "OPTIONS" }));
         configuration.setAllowedHeaders(Arrays.asList(new String[] { "*" }));
         configuration.setAllowCredentials(true);
