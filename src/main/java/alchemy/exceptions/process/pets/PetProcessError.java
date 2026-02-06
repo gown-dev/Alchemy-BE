@@ -15,5 +15,5 @@ public enum PetProcessError implements ProcessError {
 	public String code;
 	public String description;
 	public String message;
-	
+
 }

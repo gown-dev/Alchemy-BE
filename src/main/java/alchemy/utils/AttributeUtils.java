@@ -10,25 +10,29 @@ import alchemy.model.pets.attributes.DerivedAttribute;
 public class AttributeUtils {
 
 	public static Attribute findAttributeByValue(String value) {
-		if (StringUtils.isBlank(value)) return null;
-	    
+		if (StringUtils.isBlank(value)) {
+			return null;
+		}
+
 	    return switch (value) {
 	        case "STRENGTH", "CONSTITUTION", "AGILITY", "INTELLECT", "WILLPOWER" -> BaseAttribute.valueOf(value);
-	        case "TOUGHNESS", "PRECISION", "FOCUS", "MOMENTUM", "DEFENCE", "ADAPTATION", "RESOLVE", "CLARITY", 
+	        case "TOUGHNESS", "PRECISION", "FOCUS", "MOMENTUM", "DEFENCE", "ADAPTATION", "RESOLVE", "CLARITY",
 	        	"INSTINCT", "MASTERY" -> DerivedAttribute.valueOf(value);
 	        default -> throw new IllegalArgumentException("Attribut inconnu : " + value);
 	    };
 	}
-	
+
 	public static AttributeDTO findAttributeDTOByValue(String value) {
-		if (StringUtils.isBlank(value)) return null;
-	    
+		if (StringUtils.isBlank(value)) {
+			return null;
+		}
+
 	    return switch (value) {
-	        case "STRENGTH", "CONSTITUTION", "AGILITY", "INTELLECT", "WILLPOWER", "TOUGHNESS", 
-	        	"PRECISION", "FOCUS", "MOMENTUM", "DEFENCE", "ADAPTATION", "RESOLVE", "CLARITY", 
+	        case "STRENGTH", "CONSTITUTION", "AGILITY", "INTELLECT", "WILLPOWER", "TOUGHNESS",
+	        	"PRECISION", "FOCUS", "MOMENTUM", "DEFENCE", "ADAPTATION", "RESOLVE", "CLARITY",
 	        	"INSTINCT", "MASTERY" -> AttributeDTO.fromValue(value);
 	        default -> throw new IllegalArgumentException("Attribut inconnu : " + value);
 	    };
 	}
-	
+
 }

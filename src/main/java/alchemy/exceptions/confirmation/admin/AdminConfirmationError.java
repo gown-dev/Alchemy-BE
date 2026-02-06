@@ -16,5 +16,5 @@ public enum AdminConfirmationError implements ConfirmationError {
 	public String description;
 	public String message;
 	public String confirmationKey;
-	
+
 }

@@ -17,7 +17,7 @@ public class LoggingAspect {
 
     @Around("@annotation(logged)")
     public Object logMethodExecution(ProceedingJoinPoint joinPoint, Logged logged) throws Throwable {
-        
+
         long startTime = System.currentTimeMillis();
         String className = joinPoint.getSignature().getDeclaringTypeName();
         String methodName = joinPoint.getSignature().getName();
@@ -30,20 +30,20 @@ public class LoggingAspect {
         try {
             Object result = joinPoint.proceed();
             long duration = System.currentTimeMillis() - startTime;
-            
+
             if (logged.logExit() && logged.logSuccess()) {
             	logger.info("<- [{}]: {} for {}.{}() with result : {} (Duration: {} ms)", description, "Success", className, methodName, result, duration);
             }
-            
+
             return result;
-            
+
         } catch (Throwable e) {
             long duration = System.currentTimeMillis() - startTime;
-            
+
             if (logged.logExit() && logged.logFailure()) {
                 logger.error("!! [{}]: {} for {}.{}() with thrown exception: {} (Duration: {} ms)", description, "Failure", className, methodName, e.getMessage(), duration);
             }
-            
+
             throw e;
         }
     }

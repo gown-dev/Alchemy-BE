@@ -17,23 +17,27 @@ import alchemy.utils.AttributeUtils;
 
 @Mapper(componentModel = "spring", subclassExhaustiveStrategy = SubclassExhaustiveStrategy.RUNTIME_EXCEPTION)
 public interface ConstraintMapper {
-	
+
 	default Attribute mapAttribute(AttributeDTO attribute) {
-	    if (attribute == null) return null;
-	    
+	    if (attribute == null) {
+			return null;
+		}
+
 	    return AttributeUtils.findAttributeByValue(attribute.getValue());
 	}
-	
+
 	default AttributeDTO toAttributeDTO(Attribute attribute) {
-        if (attribute == null) return null;
+        if (attribute == null) {
+			return null;
+		}
 
         return AttributeUtils.findAttributeDTOByValue(attribute.toString());
     }
-	
+
 	@Mapping(target = "type", constant = "ATTRIBUTE_REQUIREMENT")
 	@Mapping(source = "threshold", target = "threshold")
 	AttributeRequirementDTO toAttributeRequirementDTO(AttributeRequirement constraint);
-	
+
 	@Mapping(target = "type", constant = "ATTRIBUTE_RESTRICTION")
 	@Mapping(source = "threshold", target = "threshold")
 	AttributeRestrictionDTO toAttributeRestrictionDTO(AttributeRestriction constraint);

@@ -26,12 +26,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "GeneLoadout")
 public class GeneLoadout {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "horns_gene_id")
     private Gene horns;
@@ -59,9 +59,9 @@ public class GeneLoadout {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tail_gene_id")
     private Gene tail;
-    
+
     public List<String> getTags() {
-    	return Stream.of(horns.getTags(), ears.getTags(), head.getTags(), floof.getTags(), 
+    	return Stream.of(horns.getTags(), ears.getTags(), head.getTags(), floof.getTags(),
     			body.getTags(), wings.getTags(), tail.getTags())
     			.flatMap(List::stream)
     			.collect(Collectors.toList());

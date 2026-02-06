@@ -12,7 +12,7 @@ public enum AuthProcessError implements ProcessError {
 
 	UNAUTHENTICATED("ERR_AUTH-F001", "Unauthenticated", "Unable to read the caller account object."),
 	MALFORMED_AUTH("ERR_AUTH-F002", "Malformed authentication", "The authentication object was malformed, and the application was unable to read it."),
-	
+
 	USERNAME_UNSUITABLE("ERR_AUTH-T003", "Unsuitable username", "Username did not comply with the restrictions for registration."),
 	PASSWORD_UNSUITABLE("ERR_AUTH-F002", "Unsuitable password", "Password did not comply with the restrictions for registration."),
 	USERNAME_TAKEN("ERR_AUTH-F003", "Username already in use", "Username was already used for another Account."),
@@ -27,5 +27,5 @@ public enum AuthProcessError implements ProcessError {
 	public String code;
 	public String description;
 	public String message;
-	
+
 }

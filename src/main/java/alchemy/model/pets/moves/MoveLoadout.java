@@ -24,12 +24,12 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "MoveLoadout")
 public class MoveLoadout {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
-	
+
 	@ManyToMany
     @OrderColumn(name = "priority_order") // Hibernate gère une colonne d'index automatique
     @JoinTable(

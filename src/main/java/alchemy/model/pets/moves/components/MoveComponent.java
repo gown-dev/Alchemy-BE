@@ -21,7 +21,7 @@ import lombok.Data;
 @DiscriminatorColumn(name = "move_component_type")
 @Table(name = "MoveComponents")
 public abstract class MoveComponent {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
@@ -29,5 +29,5 @@ public abstract class MoveComponent {
 
 	public abstract MoveComponentType getType();
 	public abstract BattleEvent execute(boolean criticalHit, Champion source, Champion target);
-	
+
 }

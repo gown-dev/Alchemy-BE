@@ -37,28 +37,28 @@ public class Account implements UserDetails {
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
-	
+
 	@Column(name = "username", nullable = false)
 	private String username;
-	
+
 	@Column(name = "tag", nullable = true)
 	private String tag;
-	
+
 	@Column(name = "password", nullable = false)
 	private String password;
-	
+
 	@Builder.Default
 	private boolean active = true;
-	
+
 	@Builder.Default
 	private boolean expired = false;
-	
+
 	@Builder.Default
 	private boolean locked = false;
-	
+
 	@Builder.Default
 	private boolean expiredCredentials = false;
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(
 	    name = "Role",
@@ -86,16 +86,16 @@ public class Account implements UserDetails {
     public boolean isEnabled() {
         return active;
     }
-    
+
     @Override
     public List<? extends GrantedAuthority> getAuthorities() {
         return authorities.stream()
             .map(SimpleGrantedAuthority::new)
             .collect(Collectors.toList());
     }
-    
+
     public boolean isUsable() {
     	return isEnabled() && isAccountNonExpired() && isAccountNonLocked() && isCredentialsNonExpired();
     }
-	
+
 }

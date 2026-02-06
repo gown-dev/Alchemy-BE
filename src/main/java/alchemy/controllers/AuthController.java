@@ -27,65 +27,69 @@ import lombok.RequiredArgsConstructor;
 public class AuthController implements AuthApi {
 
 	private final AuthService authService;
-	
+
+	@Override
 	@PostMapping("/register")
     public ResponseEntity<TokenResponseDTO> register(@RequestBody AccountRequestDTO request) {
 		SecurityToken token = authService.register(request);
-		
+
 		TokenResponseDTO response = TokenResponseDTO.builder()
 				.accessToken(token.getAccessToken())
 				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
 				.refreshToken(token.getRefreshToken())
 				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
 				.build();
-		
-        return ResponseEntity.ok(response);
-    }
-	
-	@PostMapping("/login")
-    public ResponseEntity<TokenResponseDTO> login(@RequestBody AccountRequestDTO request) {
-		SecurityToken token = authService.authenticate(request);
-		
-		TokenResponseDTO response = TokenResponseDTO.builder()
-				.accessToken(token.getAccessToken())
-				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
-				.refreshToken(token.getRefreshToken())
-				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
-				.build();
-		
-        return ResponseEntity.ok(response);
-    }
-	
-	@PostMapping("/refresh")
-    public ResponseEntity<TokenResponseDTO> refresh(@RequestBody RefreshRequestDTO request) {
-		SecurityToken token = authService.refresh(request);
-		
-		TokenResponseDTO response = TokenResponseDTO.builder()
-				.accessToken(token.getAccessToken())
-				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
-				.refreshToken(token.getRefreshToken())
-				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
-				.build();
-		
+
         return ResponseEntity.ok(response);
     }
 
+	@Override
+	@PostMapping("/login")
+    public ResponseEntity<TokenResponseDTO> login(@RequestBody AccountRequestDTO request) {
+		SecurityToken token = authService.authenticate(request);
+
+		TokenResponseDTO response = TokenResponseDTO.builder()
+				.accessToken(token.getAccessToken())
+				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
+				.refreshToken(token.getRefreshToken())
+				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
+				.build();
+
+        return ResponseEntity.ok(response);
+    }
+
+	@Override
+	@PostMapping("/refresh")
+    public ResponseEntity<TokenResponseDTO> refresh(@RequestBody RefreshRequestDTO request) {
+		SecurityToken token = authService.refresh(request);
+
+		TokenResponseDTO response = TokenResponseDTO.builder()
+				.accessToken(token.getAccessToken())
+				.accessExpirationTime(token.getAccessExpirationTime().atOffset(ZoneOffset.UTC))
+				.refreshToken(token.getRefreshToken())
+				.refreshExpirationTime(token.getRefreshExpirationTime().atOffset(ZoneOffset.UTC))
+				.build();
+
+        return ResponseEntity.ok(response);
+    }
+
+	@Override
 	@GetMapping("/account")
 	public ResponseEntity<AccountResponseDTO> account() {
 		Account account = authService.getAuthenticatedAccount();
-		
+
 		AccountDTO dto = AccountDTO.builder()
 				.username(account.getUsername())
 				.roles(account.getAuthorities().stream()
 						.map(authority -> authority.getAuthority())
 						.collect(Collectors.toList()))
 				.build();
-		
+
 		AccountResponseDTO response = AccountResponseDTO.builder()
 				.account(dto)
 				.build();
-		
+
 		return ResponseEntity.ok(response);
 	}
-	
+
 }

@@ -25,20 +25,20 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "AttributeLoadout")
 public class AttributeLoadout {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
-	
+
 	private int undistributed;
-	
+
 	private int strength;
 	private int constitution;
 	private int agility;
 	private int intellect;
 	private int willpower;
-	
+
 	@Transient
 	public int getBaseAttribute(BaseAttribute attribute) {
 		switch (attribute) {
@@ -53,21 +53,21 @@ public class AttributeLoadout {
 			case WIILPOWER:
 				return willpower;
 		}
-		
+
 		return 0;
 	}
-	
+
 	@Transient
 	public int getDerivedAttribute(DerivedAttribute attribute) {
 		return getBaseAttribute(attribute.getBaseAttribute1()) + getBaseAttribute(attribute.getBaseAttribute2());
 	}
-	
+
 	@Transient
 	public void increaseBaseAttribute(BaseAttribute attribute) {
 		if (undistributed <= 0) {
 			throw new ProcessException(PetProcessError.ATTRIBUTE_INCREASE_NO_UNDISTRIBUTED_POINT, HttpStatus.BAD_REQUEST, attribute.toString());
 		}
-		
+
 		switch (attribute) {
 			case STRENGTH:
 				this.strength = strength + 1;

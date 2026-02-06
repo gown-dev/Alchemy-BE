@@ -17,7 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @ControllerAdvice
 public class AlchemyExceptionHandler {
-	
+
 	@ExceptionHandler(ConfirmationException.class)
 	public ResponseEntity<Object> handleConfirmationResponseStatus(ConfirmationException ex, HttpServletRequest request, HttpServletResponse response) {
 		ConfirmationResponseDTO error = new ConfirmationResponseDTO(
@@ -27,16 +27,16 @@ public class AlchemyExceptionHandler {
 				ex.getError().getConfirmationKey());
 		return ResponseEntity.status(HttpStatus.CONFLICT).contentType(MediaType.APPLICATION_JSON).body(error);
 	}
-	
+
 	@ExceptionHandler(ProcessException.class)
     public ResponseEntity<Object> handleResponseStatus(ProcessException ex, HttpServletRequest request, HttpServletResponse response) {
         ErrorResponseDTO error = new ErrorResponseDTO(
-        		ex.getError().getCode(), 
-        		ex.getError().getDescription(), 
+        		ex.getError().getCode(),
+        		ex.getError().getDescription(),
         		MessageFormatter.arrayFormat(ex.getError().getMessage(), ex.getParameters()).getMessage());
 		return ResponseEntity.status(ex.getHttpStatus()).contentType(MediaType.APPLICATION_JSON).body(error);
     }
-	
+
 	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
     public ResponseEntity<Object> handleHttpRequestNotSupportedException(Exception ex, HttpServletRequest request, HttpServletResponse response) {
     	log.info("[HttpRequestMethodNotSupportedException] : " + ex.getMessage());
@@ -48,5 +48,5 @@ public class AlchemyExceptionHandler {
     	ex.printStackTrace();
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
-	
+
 }

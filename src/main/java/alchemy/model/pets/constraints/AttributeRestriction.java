@@ -23,13 +23,15 @@ public class AttributeRestriction extends Restriction {
 
 	@Convert(converter = BaseAttributeConverter.class)
 	private Attribute attribute;
-	
+
 	private int threshold;
-	
+
+	@Override
 	public boolean apply(Pet pet) {
 		return attribute.getAttributeFromPet(pet) < threshold;
 	}
-	
+
+	@Override
 	public String getSignature() {
 		return "<_" + attribute.toString() + "_" + threshold;
 	}

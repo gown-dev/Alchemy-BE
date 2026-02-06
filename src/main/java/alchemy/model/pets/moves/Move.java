@@ -31,10 +31,10 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Move")
 public class Move {
-	
+
 	@Id
 	private String name;
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(
 	    name = "Move_Tag",
@@ -42,35 +42,35 @@ public class Move {
 	)
 	@Column(name = "tag")
 	private List<String> tags;
-	
+
 	@OneToMany(cascade = CascadeType.ALL)
     private List<Constraint> constraints;
-	
+
 	private int cooldown;
 
 	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<MoveComponent> components;
-	
+
 	public List<BattleEvent> execute(Champion source, Champion target) {
 		final boolean atLeastOneDamageMoveComponent = components.stream()
 				.anyMatch(component -> component.getType() == MoveComponentType.DAMAGE_COMPONENT);
 		final boolean isAboveCriticalThreshold = source.isAboveCriticalThreshold();
 		final boolean isCriticalHit = isAboveCriticalThreshold && atLeastOneDamageMoveComponent;
-		
+
 		if (isCriticalHit) {
 			source.useCriticalStacks();
 		}
-		
+
 		List<BattleEvent> events = components.stream()
 				.map(component -> component.execute(isCriticalHit, source, target))
 				.collect(Collectors.toList());
-		
+
 		if (atLeastOneDamageMoveComponent) {
 			source.gainMomentumStacks();
 			source.gainMasteryStacks();
 		}
-		
+
 		return events;
 	}
-	
+
 }

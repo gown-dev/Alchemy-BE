@@ -12,12 +12,12 @@ import lombok.extern.slf4j.Slf4j;
 @ActiveProfiles("test")
 @ContextConfiguration(classes = Autoconfiguration.class)
 public class AbstractTest {
-    
+
     @BeforeEach
     void logStart() {
     	log.info("=============== STARTING TEST ==============");
     }
-    
+
     @AfterEach
     void logEnd() {
     	log.info("================ ENDING TEST ===============");

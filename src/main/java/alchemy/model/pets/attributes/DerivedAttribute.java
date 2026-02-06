@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum DerivedAttribute implements Attribute {
-	
+
 	TOUGHNESS(BaseAttribute.STRENGTH, BaseAttribute.CONSTITUTION),
 	PRECISION(BaseAttribute.STRENGTH, BaseAttribute.AGILITY),
 	FOCUS(BaseAttribute.STRENGTH, BaseAttribute.INTELLECT),
@@ -19,7 +19,7 @@ public enum DerivedAttribute implements Attribute {
 	CLARITY(BaseAttribute.AGILITY, BaseAttribute.INTELLECT),
 	INSTINCT(BaseAttribute.AGILITY, BaseAttribute.WIILPOWER),
 	MASTERY(BaseAttribute.INTELLECT, BaseAttribute.WIILPOWER);
-	
+
 	private BaseAttribute baseAttribute1;
 	private BaseAttribute baseAttribute2;
 

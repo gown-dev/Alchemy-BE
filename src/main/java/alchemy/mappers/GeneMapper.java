@@ -11,7 +11,7 @@ import alchemy.model.pets.genes.GeneType;
 
 @Mapper(componentModel = "spring", uses = { ConstraintMapper.class })
 public interface GeneMapper {
-	
+
 	GeneTypeDTO toTypeDTO(GeneType type);
 
 	GeneType toTypeEntity(GeneTypeDTO type);
@@ -19,22 +19,22 @@ public interface GeneMapper {
 	@Mapping(source = "image", target = "image")
 	@Mapping(source = "name", target = "name")
 	GeneIdentificationDTO toGeneIdentificationDTO(Gene gene);
-	
+
 	@Mapping(source = "image", target = "identification.image")
 	@Mapping(source = "name", target = "identification.name")
 	@Mapping(source = "type", target = "type")
 	@Mapping(source = "tags", target = "tags")
 	GeneDTO toGeneDTO(Gene gene);
-	
+
 	@Mapping(source = "identification.image", target = "image")
 	@Mapping(source = "identification.name", target = "name")
 	@Mapping(source = "type", target = "type")
 	@Mapping(source = "tags", target = "tags")
 	@Mapping(source = "constraints", target = "constraints")
 	Gene toGeneEntity(GeneDTO gene);
-	
+
 	@Mapping(source = "image", target = "image")
 	@Mapping(source = "name", target = "name")
 	Gene toGeneEntity(GeneIdentificationDTO gene);
-	
+
 }

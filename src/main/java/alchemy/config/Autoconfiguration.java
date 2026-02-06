@@ -38,24 +38,24 @@ import lombok.RequiredArgsConstructor;
 @ComponentScan(basePackages = "alchemy")
 @EnableConfigurationProperties(AuthProperties.class)
 public class Autoconfiguration {
-	
+
 	public static String[] WHITELISTED_PATHS = new String[] { "/auth/register", "/auth/login", "/auth/refresh" };
-    
+
     @Bean
     public CommonsRequestLoggingFilter requestLoggingFilter() {
         CommonsRequestLoggingFilter filter = new CommonsRequestLoggingFilter();
-        
+
         filter.setIncludeClientInfo(true);
         filter.setIncludeQueryString(true);
-        filter.setIncludeHeaders(false); 
+        filter.setIncludeHeaders(false);
         filter.setIncludePayload(true);
         filter.setMaxPayloadLength(1000);
         filter.setBeforeMessagePrefix("BEFORE REQUEST: [");
         filter.setAfterMessagePrefix("AFTER REQUEST: [");
-        
+
         return filter;
     }
-    
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, BearerTokenFilter bearerTokenFilter) throws Exception {
         return http.authorizeHttpRequests((request) -> {
@@ -70,7 +70,7 @@ public class Autoconfiguration {
         .addFilterAfter(bearerTokenFilter, BasicAuthenticationFilter.class)
         .build();
     }
-    
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
@@ -79,36 +79,36 @@ public class Autoconfiguration {
         configuration.setAllowedHeaders(Arrays.asList(new String[] { "*" }));
         configuration.setAllowCredentials(true);
         configuration.setExposedHeaders(Arrays.asList(new String[] { "Authorization" }));
-        
+
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
     }
-    
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-    
+
     @Bean
     public AuthProperties authProperties() {
     	return new AuthProperties();
     }
-    
+
     @Bean
     public AlchemyExceptionHandler authExceptionHandler() {
         return new AlchemyExceptionHandler();
     }
-    
+
     @Bean
     public BearerTokenFilter bearerTokenFilter(AuthService authService) {
         return new BearerTokenFilter(authService);
     }
-    
+
     @Bean
     public UserDetailsService userDetailsService(AccountRepository accountRepository) {
         return username -> accountRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found."));
     }
-    
+
 }

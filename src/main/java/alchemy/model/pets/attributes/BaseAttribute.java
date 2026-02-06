@@ -4,7 +4,7 @@ import alchemy.model.pets.Pet;
 import jakarta.persistence.Transient;
 
 public enum BaseAttribute implements Attribute {
-	
+
 	STRENGTH,
 	CONSTITUTION,
 	AGILITY,

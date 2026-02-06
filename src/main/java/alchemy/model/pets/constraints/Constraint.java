@@ -18,12 +18,12 @@ import jakarta.persistence.Table;
 @DiscriminatorColumn(name = "constraint_type")
 @Table(name = "Constraints")
 public abstract class Constraint {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
-	
+
 	public abstract boolean apply(Pet pet);
 	public abstract String getSignature();
 

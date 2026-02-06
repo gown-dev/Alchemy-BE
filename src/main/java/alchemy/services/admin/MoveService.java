@@ -25,7 +25,7 @@ import lombok.RequiredArgsConstructor;
 @Service
 @RequiredArgsConstructor
 public class MoveService {
-	
+
 	private final MoveMapper moveMapper;
 	private final ConstraintMapper constraintMapper;
 	private final MoveRepository moveRepository;
@@ -34,21 +34,21 @@ public class MoveService {
 	public List<Move> getAllMoves() {
 		return moveRepository.findAll();
 	}
-	
+
 	@Logged("Create Move")
 	@Transactional
 	public List<Move> createMove(MoveIdentificationDTO dto) {
 		if (moveRepository.existsById(dto.getName())) {
 			throw new ProcessException(AdminProcessError.MOVE_CREATION_ALREADY_EXIST, HttpStatus.BAD_REQUEST);
 		}
-		
+
 		Move move = Move.builder()
 			.name(dto.getName())
 			.tags(new ArrayList<>(dto.getTags()))
 			.build();
-		
+
 		moveRepository.save(move);
-		
+
 		return getAllMoves();
 	}
 
@@ -58,9 +58,9 @@ public class MoveService {
 		Move move = moveRepository.findById(dto.getName()).orElseThrow(() -> {
 			throw new ProcessException(AdminProcessError.MOVE_DELETION_DOES_NOT_EXIST, HttpStatus.BAD_REQUEST);
 		});
-		
+
 		moveRepository.delete(move);
-		
+
 		return getAllMoves();
 	}
 
@@ -70,9 +70,9 @@ public class MoveService {
 		Move move = moveRepository.findById(dto.getIdentification().getName()).orElseThrow(() -> {
 			throw new ProcessException(AdminProcessError.MOVE_UPDATE_DOES_NOT_EXIST, HttpStatus.BAD_REQUEST);
 		});
-		
-		move.setTags(dto.getIdentification().getTags() != null ? 
-				new ArrayList<String>(dto.getIdentification().getTags()) : Collections.emptyList());
+
+		move.setTags(dto.getIdentification().getTags() != null ?
+				new ArrayList<>(dto.getIdentification().getTags()) : Collections.emptyList());
 		move.setCooldown(dto.getCooldown() != null ? dto.getCooldown() : 0);
 		move.setConstraints(dto.getConstraints().stream()
 				.map(constraint -> constraintMapper.toConstraintDTO(constraint))
@@ -80,10 +80,10 @@ public class MoveService {
 		move.setComponents(dto.getComponents().stream()
 				.map(component -> moveMapper.toMoveComponentEntity(component))
 				.collect(Collectors.toCollection(() -> new ArrayList<MoveComponent>())));
-		
+
 		moveRepository.save(move);
-		
+
 		return getAllMoves();
 	}
-	
+
 }

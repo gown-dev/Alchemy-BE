@@ -27,16 +27,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Gene")
 public class Gene {
-	
+
 	@Id
 	private String image;
-	
+
 	@Column(unique = true)
 	private String name;
-	
+
 	@Enumerated(EnumType.STRING)
 	private GeneType type;
-	
+
 	@ElementCollection(fetch = FetchType.EAGER)
 	@CollectionTable(
 	    name = "Gene_Tag",
@@ -44,8 +44,8 @@ public class Gene {
 	)
 	@Column(name = "tag")
 	private List<String> tags;
-	
+
 	@OneToMany(cascade = CascadeType.ALL)
     private List<Constraint> constraints;
-	
+
 }

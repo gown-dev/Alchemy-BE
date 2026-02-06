@@ -23,22 +23,22 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Pet")
 public class Pet {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", columnDefinition = "uuid")
 	private UUID id;
-	
+
 	private String name;
-	
+
 	private int level;
-	
+
 	@OneToOne
 	private AttributeLoadout attributeLoadout = new AttributeLoadout();
-	
+
 	@OneToOne
 	private GeneLoadout geneLoadout = new GeneLoadout();
-	
+
 	@OneToOne
     private MoveLoadout moveLoadout = new MoveLoadout();
 

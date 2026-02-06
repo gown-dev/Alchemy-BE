@@ -11,14 +11,18 @@ public class BaseAttributeConverter implements AttributeConverter<Attribute, Str
 
 	@Override
 	public String convertToDatabaseColumn(Attribute attribute) {
-		if (attribute == null) return null;
-		
+		if (attribute == null) {
+			return null;
+		}
+
         return ((Enum<?>) attribute).name();
 	}
 
 	@Override
 	public Attribute convertToEntityAttribute(String dbData) {
-		if (dbData == null) return null;
+		if (dbData == null) {
+			return null;
+		}
 
         try {
             return BaseAttribute.valueOf(dbData);

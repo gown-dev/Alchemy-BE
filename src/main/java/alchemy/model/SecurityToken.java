@@ -24,15 +24,15 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Token")
 public class SecurityToken {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.UUID)
 	private UUID id;
-	
+
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "account_id", nullable = false)
 	private Account account;
-	
+
 	private UUID accessToken;
 	private LocalDateTime accessExpirationTime;
 	private UUID refreshToken;

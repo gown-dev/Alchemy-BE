@@ -23,14 +23,14 @@ public interface MoveMapper {
 	@Mapping(target = "cooldown", source = "cooldown")
 	@Mapping(target = "components", source = "components")
 	MoveDTO toDTO(Move source);
-	
+
 	@Mapping(target = "name", source = "identification.name")
 	@Mapping(target = "tags", source = "identification.tags")
 	@Mapping(target = "constraints", source = "constraints")
 	@Mapping(target = "cooldown", source = "cooldown")
 	@Mapping(target = "components", source = "components")
 	Move toEntity(MoveDTO source);
-	
+
 	@Mapping(target = "type", constant = "DAMAGE_COMPONENT")
 	@Mapping(target = "baseDamage", source = "baseDamage")
 	@Mapping(target = "baseBypass", source = "baseBypass")
@@ -47,8 +47,8 @@ public interface MoveMapper {
 
 	@SubclassMapping(source = DamageComponent.class, target = DamageComponentDTO.class)
 	MoveComponentDTO toMoveComponentDTO(MoveComponent dto);
-	
+
 	DamageTypeDTO toDamageTypeDTO(DamageType source);
 	DamageType toDamageTypeEntity(DamageTypeDTO source);
-	
+
 }

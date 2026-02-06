@@ -5,7 +5,7 @@ import java.util.Collections;
 import alchemy.model.pets.moves.Move;
 
 public class MoveUtils {
-	
+
 	public static Move getDefaultMove() {
 		return Move.builder()
 			.name("Splash")
