@@ -236,6 +236,7 @@ paths:
       operationId: getMoves
       tags:
         - Admin
+        - Move
       responses:
         '200':
           description: Successfully fetched the list of pet moves.
@@ -252,6 +253,7 @@ paths:
       operationId: createMove
       tags:
         - Admin
+        - Move
       requestBody:
         required: true
         content:
@@ -280,6 +282,7 @@ paths:
       operationId: deleteMove
       tags:
         - Admin
+        - Move
       requestBody:
         required: true
         content:
@@ -308,6 +311,7 @@ paths:
       operationId: updateMove
       tags:
         - Admin
+        - Move
       requestBody:
         required: true
         content:
@@ -321,6 +325,76 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/MoveListResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /admin/wardrobe/suggestions:
+    get:
+      summary: Get the wardrobe item suggestions.
+      operationId: getWardrobeSuggestion
+      tags:
+        - Admin
+        - Wardrobe
+      parameters:
+        - name: userId
+          in: query
+          description: Optional user ID to filter wardrobe suggestions by author.
+          required: false
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Successfully created the wardrobe suggestion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WardrobeSuggestionListResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Upload a wardrobe item suggestion.
+      operationId: uploadWardrobeItem
+      tags:
+        - Admin
+        - Wardrobe
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  type: string
+                  format: binary
+                  description: Image for the wardrobe item.
+                data:
+                  $ref: '#/components/schemas/WardrobeSuggestionRequest'
+      responses:
+        '200':
+          description: Successfully created the wardrobe suggestion.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WardrobeSuggestionResponse'
         '400':
           description: Invalid request.
           content:
@@ -484,6 +558,26 @@ components:
       properties:
         move:
           $ref: '#/components/schemas/Move'
+                  
+    WardrobeSuggestionRequest:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/WardrobeItem'
+          
+    WardrobeSuggestionResponse:
+      type: object
+      properties:
+        item:
+          $ref: '#/components/schemas/WardrobeItem'
+                  
+    WardrobeSuggestionListResponse:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/WardrobeItem'
         
     ErrorResponse:
       type: object
@@ -562,23 +656,27 @@ components:
 #      properties:
         # Add the relevant parts to properly display the avatar
         
-    Clothing:
+    WardrobeItem:
       type: object
       properties:
         name:
           type: string
-          description: Name of the piece of clothing
+          description: Name of the wardrobe item
           example: Leather hat
         price:
           type: integer
-          description: Price of the piece of clothing
+          description: Price of the wardrobe item
           example: 50
-        type:
-          $ref: '#/components/schemas/ClothingType'
+        category:
+          type: 
+          $ref: '#/components/schemas/WardrobeItemCategory'
+        image:
+          type: string
+          example: "https://cdn.gown.fr/alchemy-prod/item_45.png"            
         
-    ClothingType:
+    WardrobeItemCategory:
       type: string
-      description: Type of the piece of clothing
+      description: Type of the wardrobe item
       enum:
         - HEAD
         - HAIR
