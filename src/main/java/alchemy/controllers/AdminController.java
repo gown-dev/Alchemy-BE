@@ -19,6 +19,7 @@ import alchemy.api.AdminApi;
 import alchemy.exceptions.confirmation.admin.AdminConfirmationError;
 import alchemy.mappers.GeneMapper;
 import alchemy.mappers.MoveMapper;
+import alchemy.mappers.WardrobeMapper;
 import alchemy.model.GeneCreationRequestDTO;
 import alchemy.model.GeneDeletionRequestDTO;
 import alchemy.model.GeneListResponseDTO;
@@ -27,12 +28,16 @@ import alchemy.model.MoveCreationRequestDTO;
 import alchemy.model.MoveDeletionRequestDTO;
 import alchemy.model.MoveListResponseDTO;
 import alchemy.model.MoveUpdateRequestDTO;
+import alchemy.model.WardrobeSuggestionListResponseDTO;
 import alchemy.model.WardrobeSuggestionRequestDTO;
 import alchemy.model.WardrobeSuggestionResponseDTO;
 import alchemy.model.pets.genes.Gene;
 import alchemy.model.pets.moves.Move;
+import alchemy.model.wardrobe.WardrobeItem;
 import alchemy.services.admin.GeneService;
 import alchemy.services.admin.MoveService;
+import alchemy.services.admin.WardrobeService;
+import alchemy.utils.WardrobeUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -46,6 +51,9 @@ public class AdminController implements AdminApi {
 	private final GeneService geneService;
 	private final MoveMapper moveMapper;
 	private final MoveService moveService;
+	private final WardrobeUtils wardrobeUtils;
+	private final WardrobeMapper wardrobeMapper;
+	private final WardrobeService wardrobeService;
 
 	@Override
 	@GetMapping("/genes")
@@ -145,19 +153,29 @@ public class AdminController implements AdminApi {
 		return ResponseEntity.ok(response);
 	}
 
-	@Override
 	@GetMapping("/wardrobe")
-	public ResponseEntity<WardrobeSuggestionResponseDTO> getWardrobeSuggestion(@Valid UUID userId) {
+	public ResponseEntity<WardrobeSuggestionListResponseDTO> getWardrobeSuggestion(@Valid UUID userId) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	@PostMapping("/wardrobe")
-	public ResponseEntity<WardrobeSuggestionResponseDTO> uploadWardrobeItem(MultipartFile image,
+	public ResponseEntity<WardrobeSuggestionResponseDTO> uploadWardrobeItem(MultipartFile frontImage, MultipartFile backImage,
 			@Valid WardrobeSuggestionRequestDTO data) {
-		// TODO Auto-generated method stub
-		return null;
+		WardrobeItem item = wardrobeService.uploadWardrobeItem(frontImage, backImage, data.getItem());
+		
+		WardrobeSuggestionResponseDTO response = WardrobeSuggestionResponseDTO.builder()
+				.item(wardrobeMapper.toWardrobeItemDTO(item, wardrobeUtils))
+				.build();
+		
+		return ResponseEntity.ok(response);
+	}
+
+	@DeleteMapping("/wardrobe")
+	public ResponseEntity<Void> deleteWardrobeItem(@Valid UUID id) {
+		wardrobeService.deleteWardrobeItem(id);
+
+		return ResponseEntity.ok(null);
 	}
 
 }

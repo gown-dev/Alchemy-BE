@@ -2,6 +2,7 @@ package alchemy.config;
 
 import java.util.Arrays;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +29,8 @@ import alchemy.exceptions.AlchemyExceptionHandler;
 import alchemy.filters.BearerTokenFilter;
 import alchemy.repositories.AccountRepository;
 import alchemy.services.auth.AuthService;
+import alchemy.utils.WardrobeUtils;
+import io.minio.MinioClient;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
@@ -39,6 +42,21 @@ import lombok.RequiredArgsConstructor;
 @EnableConfigurationProperties(AuthProperties.class)
 public class Autoconfiguration {
 
+	@Value("${cdn.endpoint}")
+	private String cdnEndpoint;
+	
+	@Value("${cdn.access-key-id}")
+	private String cdnKey;
+	
+	@Value("${cdn.access-key-secret}")
+	private String cdnSecret;
+	
+	@Value("${cdn.bucket.public}")
+	private String cdnPublicBucket;
+	
+	@Value("${cdn.bucket.private}")
+	private String cdnPrivateBucket;
+	
 	public static String[] WHITELISTED_PATHS = new String[] { "/auth/register", "/auth/login", "/auth/refresh" };
 
     @Bean
@@ -109,6 +127,19 @@ public class Autoconfiguration {
     public UserDetailsService userDetailsService(AccountRepository accountRepository) {
         return username -> accountRepository.findByUsername(username)
             .orElseThrow(() -> new UsernameNotFoundException("User not found."));
+    }
+    
+    @Bean
+    public WardrobeUtils wardrobeUtils() {
+    	return new WardrobeUtils(cdnEndpoint, cdnPublicBucket, cdnPrivateBucket);
+    }
+    
+    @Bean
+    public MinioClient minioClient() {
+    	return MinioClient.builder()
+          .endpoint(cdnEndpoint)
+          .credentials(cdnKey, cdnSecret)
+          .build();
     }
 
 }

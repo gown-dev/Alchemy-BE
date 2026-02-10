@@ -37,6 +37,7 @@ public interface MoveMapper {
 	@Mapping(target = "damageType", source = "damageType")
 	DamageComponentDTO toDamageComponentDTO(DamageComponent constraint);
 
+	@Mapping(target = "id", ignore = true)
 	@Mapping(target = "baseDamage", source = "baseDamage")
 	@Mapping(target = "baseBypass", source = "baseBypass")
 	@Mapping(target = "damageType", source = "damageType")

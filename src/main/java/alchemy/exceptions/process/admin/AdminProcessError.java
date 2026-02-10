@@ -14,7 +14,13 @@ public enum AdminProcessError implements ProcessError {
 	GENE_DELETION_DOES_NOT_EXIST("ERR_ADM-F002", "Gene does not exist", "Upon gene deletion, the following keys couldn't be found and deleted : {}"),
 	MOVE_CREATION_ALREADY_EXIST("ERR_ADM-F003", "Duplicates exist", "Upon move creation, the following keys already exist : {}"),
 	MOVE_DELETION_DOES_NOT_EXIST("ERR_ADM-F004", "Move does not exist", "Upon move deletion, the following keys couldn't be found and deleted : {}"),
-	MOVE_UPDATE_DOES_NOT_EXIST("ERR_ADM-F005", "Move does not exist", "Upon move update, the following keys couldn't be found and updated : {}");
+	MOVE_UPDATE_DOES_NOT_EXIST("ERR_ADM-F005", "Move does not exist", "Upon move update, the following keys couldn't be found and updated : {}"),
+	WARDROBE_UPLOAD_MISSING_DATA("ERR_ADM-F006", "Wardrobe upload has incomplete data", "When uploading a new wardrobe item, some data were missing : {}"),
+	WARDROBE_UPLOAD_ALREADY_EXIST("ERR_ADM-F007", "Duplicates exist", "Upon wardrobe upload, the following name was already used : {}"),
+	WARDROBE_UPLOAD_FAILED("ERR_ADM-F008", "Upload failed", "Upon uploading a file to the CDN, a technical error occured."),
+	WARDROBE_DELETION_DOES_NOT_EXIST("ERR_ADM-F009", "Wardrobe item does not exist", "Upon wardrobe deletion, the following key couldn't be found and deleted : {}"),
+	WARDROBE_DELETION_NOT_ALLOWED("ERR_ADM-F010", "Wardrobe unauthorized deletion", "Upon wardrobe deletion, the authenticated user doesn't have the right to delete this item."),
+	WARDROBE_DELETION_FAILED("ERR_ADM-F011", "Wardrobe deletion failed", "Upon wardrobe deletion, a technical error occured.");
 
 	public String code;
 	public String description;

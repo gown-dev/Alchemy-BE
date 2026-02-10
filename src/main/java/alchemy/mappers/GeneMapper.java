@@ -35,6 +35,9 @@ public interface GeneMapper {
 
 	@Mapping(source = "image", target = "image")
 	@Mapping(source = "name", target = "name")
+	@Mapping(target = "type", ignore = true)
+	@Mapping(target = "tags", ignore = true)
+	@Mapping(target = "constraints", ignore = true)
 	Gene toGeneEntity(GeneIdentificationDTO gene);
 
 }

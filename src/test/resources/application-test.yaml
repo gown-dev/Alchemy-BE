@@ -11,3 +11,11 @@ spring:
     show-sql: false
     hibernate:
       ddl-auto: create-drop
+
+cdn:
+  endpoint: "https://cdn-test.fr"
+  access-key-id: "123456789"
+  access-key-secret: "987654321"
+  bucket:
+    public: "alchemy-dev"
+    private: "alchemy-private"

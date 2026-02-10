@@ -382,10 +382,14 @@ paths:
             schema:
               type: object
               properties:
-                image:
+                image-front:
                   type: string
                   format: binary
-                  description: Image for the wardrobe item.
+                  description: Front image for the wardrobe item.
+                image-back:
+                  type: string
+                  format: binary
+                  description: Back image for the wardrobe item.
                 data:
                   $ref: '#/components/schemas/WardrobeSuggestionRequest'
       responses:
@@ -395,6 +399,32 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/WardrobeSuggestionResponse'
+        '400':
+          description: Invalid request.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '403':
+          $ref: '#/components/responses/UnauthorizedError'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+          
+    delete:
+      summary: Delete a wardrobe item suggestion.
+      operationId: deleteWardrobeItem
+      tags:
+        - Admin
+        - Move
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WardrobeSuggestionDeletionRequest'
+      responses:
+        '200':
+          description: Successfully deleted the wardrobe suggestion.
         '400':
           description: Invalid request.
           content:
@@ -565,6 +595,12 @@ components:
         item:
           $ref: '#/components/schemas/WardrobeItem'
           
+    WardrobeSuggestionDeletionRequest:
+      type: string
+      format: uuid
+      description: Wardrobe item id.
+      example: 8eacd69a-2dd3-4b25-bb71-72924a59b928
+          
     WardrobeSuggestionResponse:
       type: object
       properties:
@@ -670,9 +706,14 @@ components:
         category:
           type: 
           $ref: '#/components/schemas/WardrobeItemCategory'
-        image:
+        front-image:
           type: string
-          example: "https://cdn.gown.fr/alchemy-prod/item_45.png"            
+          description: URL of the image for the front view
+          example: "https://cdn.gown.fr/alchemy-prod/item_45-front.png" 
+        back-image:
+          type: string
+          description: URL of the image for the back view
+          example: "https://cdn.gown.fr/alchemy-prod/item_45-back.png"   
         
     WardrobeItemCategory:
       type: string

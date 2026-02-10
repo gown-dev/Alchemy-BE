@@ -38,13 +38,13 @@ public class GeneService {
 	public List<Gene> synchronizeGenes(List<GeneIdentificationDTO> expectedGenes, boolean confirmed) {
 		List<String> expectedImageKeys = expectedGenes.stream().map(gene -> gene.getImage()).collect(Collectors.toList());
 
-		log.debug("Expected genes with image keys : {}", expectedImageKeys.stream().collect(Collectors.joining(", ")));
+		log.debug("Expected genes with image keys : {}", String.join(", ", expectedImageKeys));
 
 		List<String> savedKeys = getAllGenes().stream()
 				.map(gene -> gene.getImage())
 				.collect(Collectors.toList());
 
-		log.debug("Current genes image keys in database : {}", savedKeys.stream().collect(Collectors.joining(", ")));
+		log.debug("Current genes image keys in database : {}", String.join(", ", savedKeys));
 
 		List<Gene> genesToCreate = expectedGenes.stream()
 				.filter(gene -> !savedKeys.contains(gene.getImage()))
@@ -65,7 +65,7 @@ public class GeneService {
 
 		if (!confirmed && genesToDelete.size() > 0) {
 			log.debug("Synchronization was not confirmed via the related header but causes deletion. Confirmation exception raised.");
-			String messageDetails = genesToDelete.stream().collect(Collectors.joining(", "));
+			String messageDetails = String.join(", ", genesToDelete);
 			throw new ConfirmationException(AdminConfirmationError.GENES_SYNCHRONIZATION_CONFIRM, messageDetails);
 		}
 
@@ -115,8 +115,7 @@ public class GeneService {
 				.map(gene -> gene.getImage())
 				.collect(Collectors.toCollection(() -> new ArrayList<String>()));
 
-		log.debug("Genes deletion for keys : {}", genesToDelete.stream().map(id -> id.toString())
-				.collect(Collectors.joining(", ")));
+		log.debug("Genes deletion for keys : {}", String.join(", ", genesToDelete));
 
 		List<String> existingGenes = geneRepository.findAllById(genesToDelete).stream()
 				.map(gene -> gene.getImage())
@@ -125,7 +124,7 @@ public class GeneService {
 		if (existingGenes.size() < genesToDelete.size()) {
 			genesToDelete.removeAll(existingGenes);
 
-			String messageDetails = genesToDelete.stream().collect(Collectors.joining(", "));
+			String messageDetails = String.join(", ", genesToDelete);
 			throw new ProcessException(AdminProcessError.GENE_DELETION_DOES_NOT_EXIST, HttpStatus.BAD_REQUEST, messageDetails);
 		}
 

@@ -97,5 +97,9 @@ public class Account implements UserDetails {
     public boolean isUsable() {
     	return isEnabled() && isAccountNonExpired() && isAccountNonLocked() && isCredentialsNonExpired();
     }
+    
+    public boolean isAdmin() {
+    	return authorities.contains("ADMIN");
+    }
 
 }
