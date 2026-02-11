@@ -1,15 +1,12 @@
-#
-# Build stage
-#
+# --- Stage 1 : Build ---
 FROM maven:3.9.6-eclipse-temurin-21 AS build
 COPY src /home/app/src
 COPY pom.xml /home/app
-RUN mvn -f /home/app/pom.xml clean package
+RUN mvn -f /home/app/pom.xml clean package -DskipTests
 
-#
-# Package stage
-#
-FROM maven:3.9.6-eclipse-temurin-21
-COPY --from=build /home/app/target/alchemy-be-0.0.1-SNAPSHOT.jar /usr/local/lib/alchemy-be-0.0.1-SNAPSHOT.jar
+# --- Stage 2 : Runtime ---
+FROM eclipse-temurin:21-jre-alpine
+WORKDIR /usr/local/lib
+COPY --from=build /home/app/target/*.jar app.jar
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/usr/local/lib/alchemy-be-0.0.1-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "app.jar"]
