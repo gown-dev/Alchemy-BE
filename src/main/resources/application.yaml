@@ -34,5 +34,5 @@ cdn:
   access-key-id: ${CDN_ACCESS_KEY}
   access-key-secret: ${CDN_ACCESS_SECRET}
   bucket:
-    public: ${CDN__PUBLIC_BUCKET}
+    public: ${CDN_PUBLIC_BUCKET}
     private: ${CDN_PRIVATE_BUCKET}

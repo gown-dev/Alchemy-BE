@@ -92,3 +92,4 @@ nb-configuration.xml
 .settings/
 .classpath
 .settings/org.eclipse.jdt.core.prefs
+/target
